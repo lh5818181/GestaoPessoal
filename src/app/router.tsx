@@ -1,8 +1,7 @@
-// src/app/router.tsx
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../pages/Auth/index';
+import Login from '../pages/Auth/Login';
 import Register from '../pages/Auth/Register';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Transactions from '../pages/Finance/Transactions';
