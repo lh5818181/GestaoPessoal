@@ -1,10 +1,22 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-
-const isAuthenticated = () => !!localStorage.getItem('token');
+import { useUser } from '../features/auth/useUser';
+import toast from 'react-hot-toast';
 
 const PrivateRoute: React.FC = () => {
-  return isAuthenticated() ? <Outlet /> : <Navigate to="/login" replace />;
+  const { data: user, isLoading, isError } = useUser();
+
+  if (isLoading) {
+    return <p>Carregando...</p>; // ou skeleton de loading
+  }
+
+  if (isError || !user) {
+    toast.error('Sessão expirada. Faça login.');
+    localStorage.removeItem('token');
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;

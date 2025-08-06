@@ -4,10 +4,15 @@ import BalanceChart from '../Finance/BalanceChart';
 import { useFinance } from '../../features/finance/useFinance';
 
 const Dashboard: React.FC = () => {
-  const { data: transactions = [] } = useFinance();
+  const { data: transactions, isLoading, error } = useFinance();
+
+  if (isLoading) return <p>Carregando dashboard...</p>;
+  if (error) return <p>Erro ao carregar transações.</p>;
+
+  const validTransactions = Array.isArray(transactions) ? transactions : [];
 
   // Calcular saldo diário
-  const chartData = transactions.reduce<{ date: string; balance: number; }[]>((acc, tx) => {
+  const chartData = validTransactions.reduce<{ date: string; balance: number; }[]>((acc, tx) => {
     const last = acc.length ? acc[acc.length - 1].balance : 0;
     const newBalance = last + (tx.type === 'income' ? tx.amount : -tx.amount);
     acc.push({ date: tx.date, balance: newBalance });

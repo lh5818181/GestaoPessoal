@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver as zodResolverRH } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
 
 const loginSchema = z.object({ email: z.string().email(), password: z.string().min(6) });
@@ -39,6 +39,12 @@ const Login: React.FC = () => {
         <button type="submit" disabled={isLoading} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
           {isLoading ? 'Entrando...' : 'Entrar'}
         </button>
+        <p className="text-center text-sm">
+          Não tem conta?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Cadastre-se
+          </Link>
+        </p>
       </form>
     </div>
   );
