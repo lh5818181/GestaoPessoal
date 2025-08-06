@@ -1,13 +1,19 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+// src/app/PrivateRoute.tsx
+
+import React, { type PropsWithChildren } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useUser } from '../features/auth/useUser';
 import toast from 'react-hot-toast';
 
-const PrivateRoute: React.FC = () => {
+interface PrivateRouteProps extends PropsWithChildren {
+  children: React.ReactElement;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { data: user, isLoading, isError } = useUser();
 
   if (isLoading) {
-    return <p>Carregando...</p>; // ou skeleton de loading
+    return <p>Carregando...</p>;
   }
 
   if (isError || !user) {
@@ -16,7 +22,7 @@ const PrivateRoute: React.FC = () => {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 export default PrivateRoute;
