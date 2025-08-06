@@ -5,7 +5,7 @@ const apiClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Adiciona token automaticamente se existir
+// Interceptor para adicionar token JWT nas requisições
 apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token && config.headers) {
