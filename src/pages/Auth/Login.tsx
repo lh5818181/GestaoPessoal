@@ -4,17 +4,7 @@ import { zodResolver as zodResolverRH } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../features/auth/useAuth';
-import {
-  Container,
-  Form,
-  Title,
-  Label,
-  Input,
-  Error,
-  Button,
-  SmallText,
-  StyledLink,
-} from './styles';
+import * as S from './Auth.styles';
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -39,36 +29,41 @@ const Login: React.FC = () => {
       await mutateAsync(data);
       navigate('/dashboard');
     } catch {
-      // O erro já é tratado no hook (toast)
+      // Toast já trata erro no hook
     }
   };
 
   return (
-    <Container>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Title>Login</Title>
+    <S.Container>
+      <S.Form onSubmit={handleSubmit(onSubmit)}>
+        <S.Title>Login</S.Title>
 
         <div>
-          <Label>Email</Label>
-          <Input type="email" {...register('email')} />
-          <Error>{errors.email?.message}</Error>
+          <S.Label>Email</S.Label>
+          <S.Input type="email" {...register('email')} />
+          {errors.email && <S.ErrorText>{errors.email.message}</S.ErrorText>}
         </div>
 
         <div>
-          <Label>Senha</Label>
-          <Input type="password" {...register('password')} />
-          <Error>{errors.password?.message}</Error>
+          <S.Label>Senha</S.Label>
+          <S.Input type="password" {...register('password')} />
+          {errors.password && (
+            <S.ErrorText>{errors.password.message}</S.ErrorText>
+          )}
         </div>
 
-        <Button type="submit" disabled={isLoading}>
+        <S.Button type="submit" disabled={isLoading}>
           {isLoading ? 'Entrando...' : 'Entrar'}
-        </Button>
+        </S.Button>
 
-        <SmallText>
-          Não tem conta? <StyledLink to="/register">Cadastre-se</StyledLink>
-        </SmallText>
-      </Form>
-    </Container>
+        <S.InfoText>
+          Não tem conta?{' '}
+          <Link to="/register">
+            <S.LinkStyled>Cadastre-se</S.LinkStyled>
+          </Link>
+        </S.InfoText>
+      </S.Form>
+    </S.Container>
   );
 };
 

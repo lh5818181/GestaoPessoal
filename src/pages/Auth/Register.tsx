@@ -5,8 +5,8 @@ import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import toast from 'react-hot-toast';
+import * as S from './Auth.styles';
 
-// 1) Esquema Zod para validação dos campos
 const registerSchema = z.object({
   name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
   email: z.string().email('Email inválido'),
@@ -25,24 +25,12 @@ const Register: React.FC = () => {
     resolver: zodResolverRH(registerSchema),
   });
 
-  // 2) Função que trata a submissão do formulário
   const onSubmit = async (data: RegisterData) => {
     try {
-      // Chama a API de registro
-      const response = await apiClient.post('/auth/register', data);
-
-      // Feedback visual de sucesso
+      await apiClient.post('/auth/register', data);
       toast.success('Cadastro realizado com sucesso!');
-
-      // 3) [Opcional] Auto-login imediato:
-      // const { token } = response.data;
-      // localStorage.setItem('token', token);
-      // navigate('/dashboard');
-
-      // 4) Redireciona para a página de login
       navigate('/login');
     } catch (err: any) {
-      // Mostra mensagem de erro vindo da API ou genérica
       const message = err?.response?.data?.message || 'Erro ao cadastrar';
       toast.error(message);
       console.error('Register error:', err);
@@ -50,70 +38,45 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white p-8 rounded-lg shadow-md w-80 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-center">Cadastre-se</h1>
+    <S.Container>
+      <S.Form onSubmit={handleSubmit(onSubmit)}>
+        <S.Title>Cadastre-se</S.Title>
 
-        {/* Campo Nome */}
+        {/* Nome */}
         <div>
-          <label className="block text-sm">Nome</label>
-          <input
-            type="text"
-            {...formRegister('name')}
-            className="w-full border p-2 rounded"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
+          <S.Label>Nome</S.Label>
+          <S.Input type="text" {...formRegister('name')} />
+          {errors.name && <S.ErrorText>{errors.name.message}</S.ErrorText>}
         </div>
 
-        {/* Campo Email */}
+        {/* Email */}
         <div>
-          <label className="block text-sm">Email</label>
-          <input
-            type="email"
-            {...formRegister('email')}
-            className="w-full border p-2 rounded"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
-          )}
+          <S.Label>Email</S.Label>
+          <S.Input type="email" {...formRegister('email')} />
+          {errors.email && <S.ErrorText>{errors.email.message}</S.ErrorText>}
         </div>
 
-        {/* Campo Senha */}
+        {/* Senha */}
         <div>
-          <label className="block text-sm">Senha</label>
-          <input
-            type="password"
-            {...formRegister('password')}
-            className="w-full border p-2 rounded"
-          />
+          <S.Label>Senha</S.Label>
+          <S.Input type="password" {...formRegister('password')} />
           {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
+            <S.ErrorText>{errors.password.message}</S.ErrorText>
           )}
         </div>
 
-        {/* Botão de Envio */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
-        >
+        <S.Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
-        </button>
+        </S.Button>
 
-        {/* Link para login */}
-        <p className="text-center text-sm">
+        <S.InfoText>
           Já tem conta?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Entre aqui
+          <Link to="/login">
+            <S.LinkStyled>Entre aqui</S.LinkStyled>
           </Link>
-        </p>
-      </form>
-    </div>
+        </S.InfoText>
+      </S.Form>
+    </S.Container>
   );
 };
 

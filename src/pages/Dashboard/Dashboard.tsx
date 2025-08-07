@@ -2,37 +2,59 @@ import React from 'react';
 import Card from '../../components/Card';
 import BalanceChart from '../Finance/BalanceChart';
 import { useFinance } from '../../features/finance/useFinance';
+import * as S from './Dashboard.styles';
 
 const Dashboard: React.FC = () => {
   const { data: transactions, isLoading, error } = useFinance();
 
-  if (isLoading) return <p>Carregando dashboard...</p>;
-  if (error) return <p>Erro ao carregar transações.</p>;
+  if (isLoading) {
+    return (
+      <S.Container>
+        <S.LoadingMessage>Carregando dashboard...</S.LoadingMessage>
+      </S.Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <S.Container>
+        <S.ErrorMessage>
+          Nenhuma transação disponível no momento.
+        </S.ErrorMessage>
+      </S.Container>
+    );
+  }
 
   const validTransactions = Array.isArray(transactions) ? transactions : [];
 
-  // Calcular saldo diário
-  const chartData = validTransactions.reduce<{ date: string; balance: number; }[]>((acc, tx) => {
+  const chartData = validTransactions.reduce<
+    { date: string; balance: number }[]
+  >((acc, tx) => {
     const last = acc.length ? acc[acc.length - 1].balance : 0;
-    const newBalance = last + (tx.type === 'income' ? tx.amount : -tx.amount);
+    const newBalance =
+      last + (tx.type === 'income' ? tx.amount : -tx.amount);
     acc.push({ date: tx.date, balance: newBalance });
     return acc;
   }, []);
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="col-span-2">
-          <h2 className="text-xl font-semibold mb-2">Balance Over Time</h2>
-          <BalanceChart data={chartData} />
-        </Card>
+    <S.Container>
+      <S.Title>Dashboard</S.Title>
+
+      <S.Grid>
+        <S.ChartCard>
+          <Card>
+            <S.SectionTitle>Balance Over Time</S.SectionTitle>
+            <BalanceChart data={chartData} />
+          </Card>
+        </S.ChartCard>
+
         <Card>
-          <h2 className="text-xl font-semibold mb-2">Quick Actions</h2>
+          <S.SectionTitle>Quick Actions</S.SectionTitle>
           {/* inserir botões de ação */}
         </Card>
-      </div>
-    </div>
+      </S.Grid>
+    </S.Container>
   );
 };
 
